@@ -10,6 +10,13 @@ router.get('/', (req, res, next) => {
 router.get('/:productId', (req, res, next) => {
     const id = req.params.productId;
     console.log('Product Id: ' + id);
+  
+    if(true){
+        return res.status(404).json({
+            success: false,
+            message: "Product Id does not exist"
+        });
+    }
 
     res.status(200).json({
         message: 'Get product for Product Id: ' + id
@@ -18,8 +25,16 @@ router.get('/:productId', (req, res, next) => {
 
 router.post('/', (req, res, next) => {
 
+    const product = {
+        name: req.body.name,
+        price: req.body.price
+    }
+
+    console.log(product);
+
     res.status(201).json({
-        message: "Handling Post request  to /Products resource"
+        message: "Handling Post request  to /Products resource",
+        product: product
     });
 });
 
