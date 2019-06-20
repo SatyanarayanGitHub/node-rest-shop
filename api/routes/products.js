@@ -10,6 +10,13 @@ router.get('/', (req, res, next) => {
 router.get('/:productId', (req, res, next) => {
     const id = req.params.productId;
     console.log('Product Id: ' + id);
+  
+    if(true){
+        return res.status(404).json({
+            success: false,
+            message: "Product Id does not exist"
+        });
+    }
 
     res.status(200).json({
         message: 'Get product for Product Id: ' + id
