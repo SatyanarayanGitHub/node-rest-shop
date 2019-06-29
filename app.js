@@ -16,7 +16,7 @@ mongoose.connect("mongodb+srv://ronak:ronak123@cluster0-02wkr.mongodb.net/node-s
         console.log('Connection failed!!!');
     });
 
-//mongoose.Promise = global.Promise;
+mongoose.Promise = global.Promise;
 //const db = mongoose.connection;
 //db.on('error', console.error.bind(console, 'MongoDB connection error:'));
 

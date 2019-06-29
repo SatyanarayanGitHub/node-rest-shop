@@ -5,20 +5,38 @@ const Product = require('../model/product');
 const router = express.Router();
 
 router.get('/', (req, res, next) => {
+
     Product.find()
+        .select('name price _id')
         .exec()
         .then(docs => {
             console.log(docs);
 
+            const response = {
+                count: docs.length,
+                products: docs.map(doc => {
+                    return {
+                        name: doc.name,
+                        price: doc.price,
+                        _id: doc._id,
+                        request: {
+                            type: 'GET',
+                            url: 'http://localhost:3000/products/' + doc._id
+                        }
+                    }
+                })
+            };
+
+
             if (docs.length > 0) {
                 res.status(200).json({
                     success: true,
-                    data: docs
+                    data: response
                 });
             } else {
                 res.status(200).json({
                     success: true,
-                    data: docs,
+                    data: response,
                     message: 'No Product exists'
                 })
             }
@@ -50,12 +68,21 @@ router.get('/:productId', (req, res, next) => {
 
 
     Product.findById(id)
+        .select('name price _id')
         .exec()
         .then(doc => {
             console.log("==>> Product :: ", doc);
 
             if (doc) {
-                res.status(200).json(doc);
+                res.status(200).json({
+                    success: true,
+                    product: doc,
+                    request: {
+                        type: 'GET',
+                        description: 'Get all Product',
+                        url: 'http://localhost:3000/products'
+                    }
+                });
             } else {
                 res.status(404).json({
                     success: true,
@@ -87,47 +114,55 @@ router.post('/', (req, res, next) => {
 
         console.log("new Product " + product);
 
-        /*
+
         // using promise apprach
         product.save()
             .then(result => {
                 console.log(result);
 
                 res.status(201).json({
-                    message: "Handling Post request  to /Products resource",
-                    product: product
+                    success: true,
+                    product: {
+                        name: result.name,
+                        price: result.price,
+                        _id: result._id,
+                        request: {
+                            type: 'GET',
+                            url: "http://localhost:3000/products/" + result._id
+                        }
+                    }
                 });
             })
             .catch(err => {
-                console.log(err);
+                console.log("==>> ERROR :: ", err);
                 res.status(500).json({
                     success: false,
                     errorMessage: err
+                });
             });
-        */
-        product.save((err, result) => {
 
-            if (err) {
-                console.log("==>> ERROR :: ", err);
-                return res.status(500).json({
-                    success: false,
-                    errorMessage: "Fail to add Product!!"
-                })
-            }
-
-            console.log('Product added successfully!!!');
-            res.status(201).json({
-                success: true,
-                product: result
-            });
-        });
-
-
+        /*
+         product.save((err, result) => {
+ 
+             if (err) {
+                 console.log("==>> ERROR :: ", err);
+                 return res.status(500).json({
+                     success: false,
+                     errorMessage: "Fail to add Product!!"
+                 })
+             }
+ 
+             console.log('Product added successfully!!!');
+             res.status(201).json({
+                 success: true,
+                 product: result
+             });
+         });
+          */
     } catch (err) {
         res.status(500).json({
             message: err.message
         });
-
     }
 });
 
@@ -136,7 +171,6 @@ router.patch('/:productId', (req, res, next) => {
     console.log('Product Id: ' + id);
 
     const updateOps = {};
-
     for (const ops of req.body) {
         updateOps[ops.propName] = ups.value;
     }
@@ -144,10 +178,14 @@ router.patch('/:productId', (req, res, next) => {
     Product.update({ _id: id }, { $set: updateOps })
         .exec()
         .then(result => {
-            console.log(result);
+            console.log("Updated Product: ", result);
             res.status(200).json({
                 success: true,
-                data: result
+                message: 'Product updated',
+                request: {
+                    type: 'GET',
+                    url: 'http://localhost:300/products/' + id
+                }
             })
         })
         .catch(err => {
@@ -165,7 +203,6 @@ router.patch('/:productId', (req, res, next) => {
 });
 
 router.delete('/:productId', (req, res, next) => {
-
     /*
     res.status(200).json({
         message: 'Product was deleted',
@@ -181,7 +218,12 @@ router.delete('/:productId', (req, res, next) => {
         .then(result => {
             res.status(200).json({
                 success: true,
-                message: 'Product deleted successful!!'
+                message: 'Product deleted successful!!',
+                request: {
+                    type: 'POST',
+                    url: 'http://localhost:300/products',
+                    body: { name: 'String', price: 'Number' }
+                }
             });
         })
         .catch(err => {
