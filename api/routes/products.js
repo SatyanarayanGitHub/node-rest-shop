@@ -178,7 +178,7 @@ router.patch('/:productId', (req, res, next) => {
     Product.update({ _id: id }, { $set: updateOps })
         .exec()
         .then(result => {
-            console.log("Updated Product: ", result);
+            console.log("Product updated   : ", result);
             res.status(200).json({
                 success: true,
                 message: 'Product updated',
