@@ -135,8 +135,7 @@ router.patch('/:orderId', async (req, res, next) => {
 });
 
 // Delete an Order
-router.delete('/:orderId', (req, res, next) => {
-
+router.delete('/:orderId', async (req, res, next) => {
     const id = req.params.orderId;
     console.log('Order Id: ' + id);
 
