@@ -174,5 +174,66 @@ router.delete('/:orderId', async (req, res, next) => {
 
 });
 
+// Get ALL orders with product data
+router.get('/orderwithproduct/all', (req, res, next) => {
+
+    Order.find()
+      //  .select('product quantity _id')
+        .populate('product', 'name price')
+        .exec()
+        .then(docs => {
+            res.status(200).json({
+                success: true,
+                data: docs.map(doc => {
+                    return {
+                        product: doc.product,
+                        quantity: doc.quantity,
+                        id: doc._id,
+                        request: {
+                            type: 'GET',
+                            url: 'http://localhost:3000/orders/' + doc._id
+                        }
+                    }
+                })
+            }).end();
+        })
+        .catch(err => {
+            console.log("==>> ERROR :: ", err);
+            res.status(500).json({
+                success: false,
+                errorMessage: err
+            });
+        });
+});
+
+// GET order by Id with product data
+router.get('/orderwithproduct/:orderId', async (req, res, next) => {
+
+    try {
+        const id = req.params.orderId;
+        console.log('Order Id: ' + id);
+
+        const order = await Order.findById(id)
+            .select('product quantity _id')
+            .populate('product', 'name');
+
+        if (!order) {
+            return res.status(404).json({
+                success: false,
+                message: 'Order does not found'
+            }).end();
+        }
+
+        res.status(200).json(order).end();
+
+    } catch (e) {
+        console.log("==>> ERROR :: ", e);
+        res.status(500).json({
+            success: false,
+            error: e
+        })
+    }
+});
+
 
 module.exports = router;
