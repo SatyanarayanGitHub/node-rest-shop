@@ -7,27 +7,66 @@ const mongoose = require('mongoose');
 const productRoutes = require('./api/routes/products')
 const orderRoutes = require('./api/routes/orders')
 
+//we load the db location from the JSON files
+const config = require('./config');
+
+const port = process.env.PORT || 3000;
+const environment = process.env.NODE_ENV || 'development';
+const environmentConfig = config[environment];
+
+app.listen(port, () => {
+    console.log("App started on port :: ", port);
+});
+
+
+//db options
+let options = {
+    server: { socketOptions: { keepAlive: 1, connectTimeoutMS: 30000 } },
+    replset: { socketOptions: { keepAlive: 1, connectTimeoutMS: 30000 } }
+};
+
+console.log("Environment :: ", environment);
+console.log('db url: ', environmentConfig.database_url);
+
+//db connection  
+mongoose.connect(environmentConfig.database_url, { useNewUrlParser: true });
+let db = mongoose.connection;
+db.on('error', console.error.bind(console, 'connection error:'));
+
+
 // Database connection 
 //password=satya123
-mongoose.connect("mongodb+srv://ronak:ronak123@cluster0-02wkr.mongodb.net/node-shop-db?retryWrites=true&w=majority", { useNewUrlParser: true })
+/*
+mongoose.connect(environmentConfig.database_url, { useNewUrlParser: true })
     .then(() => {
         console.log('Connected to database');
     }).catch(() => {
-        console.log('Connection failed!!!');
+        console.log('Database connection failed !!');
     });
 
 mongoose.Promise = global.Promise;
-//const db = mongoose.connection;
-//db.on('error', console.error.bind(console, 'MongoDB connection error:'));
+*/
 
 // Logger middleware
-app.use(morgan('dev'));
+//don't show the log when it is test
+if (environment !== 'testing') {
+    //'combined' outputs the Apache style LOGs
+    //app.use(morgan('combined')); 
+    app.use(morgan('dev'));
+}
 
 
 // parse application/x-www-form-urlencoded
 app.use(bodyParser.urlencoded({ extended: false }));
-// parse application/json
 app.use(bodyParser.json());
+
+//parse application/json and look for raw text                                        
+/*
+app.use(bodyParser.json());                                     
+app.use(bodyParser.urlencoded({extended: true}));               
+app.use(bodyParser.text());                                    
+app.use(bodyParser.json({ type: 'application/json'}));
+*/
 
 // CORS - Cross Origin Resource Sharing
 app.use((req, res, next) => {

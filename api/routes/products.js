@@ -235,4 +235,17 @@ router.delete('/:productId', (req, res, next) => {
         });
 });
 
+
+// dummy function for mocha test
+
+router.get('/test/hello', (req, res, next) => {
+
+    //console.debug('hello end point called...');
+
+    res.status(200).json({
+        success: true,
+        data: 'hello'
+    });
+});
+
 module.exports = router;
