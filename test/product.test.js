@@ -13,8 +13,7 @@ const product = require('../api/routes/products');
 chai.use(chaiHttp);
 
 
-describe('Unit test for Product', () => {
-
+describe('Unit test cases - Product', () => {
 
     it('Test 1: Test hello method', (done) => {
 

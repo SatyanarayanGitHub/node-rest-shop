@@ -12,4 +12,5 @@ const productSchema = mongoose.Schema({
     }
 });
 
+// Export the productSchema for use in applicaiton anywhere
 module.exports = mongoose.model("Product", productSchema);

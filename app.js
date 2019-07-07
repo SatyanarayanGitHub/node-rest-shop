@@ -4,8 +4,9 @@ const morgan = require('morgan');
 const bodyParser = require('body-parser');
 const mongoose = require('mongoose');
 
-const productRoutes = require('./api/routes/products')
-const orderRoutes = require('./api/routes/orders')
+const productRoutes = require('./api/routes/products');
+const orderRoutes = require('./api/routes/orders');
+const bookRoutes = require('./api/routes/book');
 
 //we load the db location from the JSON files
 const config = require('./config');
@@ -29,23 +30,21 @@ console.log("Environment :: ", environment);
 console.log('db url: ', environmentConfig.database_url);
 
 //db connection  
-mongoose.connect(environmentConfig.database_url, { useNewUrlParser: true });
-let db = mongoose.connection;
-db.on('error', console.error.bind(console, 'connection error:'));
+//mongoose.connect(environmentConfig.database_url, { useNewUrlParser: true });
+//let db = mongoose.connection;
+//db.on('error', console.error.bind(console, 'connection error:'));
 
 
 // Database connection 
-//password=satya123
-/*
 mongoose.connect(environmentConfig.database_url, { useNewUrlParser: true })
     .then(() => {
         console.log('Connected to database');
-    }).catch(() => {
+    }).catch((err) => {
         console.log('Database connection failed !!');
+        console.error("Error Message :: ", err)
     });
 
 mongoose.Promise = global.Promise;
-*/
 
 // Logger middleware
 //don't show the log when it is test
@@ -85,6 +84,7 @@ app.use((req, res, next) => {
 // Routes which should handle all incoming requests
 app.use('/products', productRoutes);
 app.use('/orders', orderRoutes);
+app.use('/books', bookRoutes);
 
 
 // No resource define
