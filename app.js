@@ -103,7 +103,8 @@ app.use((error, req, res, next) => {
     res.json({
         success: false,
         error: {
-            message: error.message
+            message: error.message,
+            error
         }
     });
 });
