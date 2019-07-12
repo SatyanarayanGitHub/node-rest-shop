@@ -7,6 +7,7 @@ const mongoose = require('mongoose');
 const productRoutes = require('./api/routes/products');
 const orderRoutes = require('./api/routes/orders');
 const bookRoutes = require('./api/routes/book');
+const userRoutes = require('./api/routes/user');
 
 //we load the db location from the JSON files
 const config = require('./config');
@@ -85,6 +86,7 @@ app.use((req, res, next) => {
 app.use('/products', productRoutes);
 app.use('/orders', orderRoutes);
 app.use('/books', bookRoutes);
+app.use('/user', userRoutes);
 
 
 // No resource define
