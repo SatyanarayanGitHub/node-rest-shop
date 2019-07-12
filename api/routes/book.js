@@ -1,5 +1,5 @@
 const express = require('express');
-const Book = require('../model/book');
+
 const bookRepository = require('../repository/bookRepository');
 const multer = require('multer');
 
